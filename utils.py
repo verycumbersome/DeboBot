@@ -15,8 +15,8 @@ import hmac
 
 consumer_key = os.environ.get("TWITTER_CONSUMER_KEY")
 consumer_secret = os.environ.get("TWITTER_CONSUMER_SECRET")
-oauth_token = "350639912-pPdscEZxEm0XpaeeekuBvtg6eqMpLXYqlwWbnz18"
-oauth_token_secret = "qdQTI4evVHaSriYx759GiHkKylekCleaKyMdawChwAA8h"
+oauth_token = "350639912-abiSfM4LCg8lfu7K5GbA8kyMIKuAiyJXC8hVwq3J"
+oauth_token_secret = "ihq0qEYmP6SFV0nebPfHZxgOfsh9p66xgi5quV2sK2w9y"
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
@@ -69,14 +69,14 @@ def get_timeline(user, count):
         }
 
     auth["oauth_signature"] = get_signature(
-            "POST",
+            "GET",
             url,
             consumer_secret,
             oauth_token_secret,
             {**parameters, **auth}
             ).decode("utf-8")
 
-    auth = {k: percent_encoding(str(auth[k])) for k in sorted(auth)}
+    auth = {k: auth[k] for k in sorted(auth)}
 
     # Format Oauth authorization header
     dst = "OAuth"
@@ -84,7 +84,7 @@ def get_timeline(user, count):
         dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
     dst = dst[:-1]
 
-    print("\n\n\n", dst, "\n\n\n")
+    # print("\n\n\n", dst, "\n\n\n")
 
     timeline = requests.get(
             url,
@@ -94,17 +94,21 @@ def get_timeline(user, count):
 
     # print(timeline)
 
-
 def get_signature(method, url, consumer_secret, token_secret, parameters):
     """Create API request signature"""
-    output = method + "&" + percent_encoding(url)
+    # output = method + "&" + percent_encoding(url)
+    parameter_string = ""
 
     # Sorted parameters for signature
     sorted_params = {k: percent_encoding(str(parameters[k])) for k in sorted(parameters)}
 
     # Generate signature base string
     for item in sorted_params.items():
-        output += "&" + item[0] + "=" + str(item[1])
+        parameter_string += "&" + percent_encoding(item[0]) + "=" + percent_encoding(str(item[1]))
+
+    output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
+
+    print(output, "\n\n")
 
     # key = b"CONSUMER_SECRET&" #If you dont have a token yet
     key = (consumer_secret + "&" + token_secret).encode()
