@@ -12,7 +12,6 @@ def main():
     nonce = utils.get_nonce(32)
 
     token = utils.get_token()
-    print(token)
     # signature = utils.get_signature(
             # True,
             # consumer_key,

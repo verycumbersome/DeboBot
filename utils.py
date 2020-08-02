@@ -37,19 +37,15 @@ def get_token():
     oauth_version = "1.0"
 
     get_signature(oauth_consumer_key, "")
-    print(oauth_consumer_key)
 
 
 def get_signature(consumer_secret, token_secret):
     """Create API request signature"""
     # key = b"CONSUMER_SECRET&" #If you dont have a token yet
-    consumer_secret + "&"
-    consumer_secret.encode('utf-8')
-    token_secret.encode('utf-8')
-    key = consumer_secret + token_secret
+    key = (consumer_secret + "&" + token_secret).encode()
     print(key)
 
-    key = b"CONSUMER_SECRET&TOKEN_SECRET"
+    # key = b"CONSUMER_SECRET&TOKEN_SECRET"
 
 
     # The Base String as specified here:
