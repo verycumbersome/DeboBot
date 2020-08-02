@@ -37,8 +37,10 @@ def get_ntp_time():
     return ntp_time
 
 def get_nonce(length=8):
-    """Generate pseudorandom number"""
-    return ''.join([str(random.randint(0, 9)) for i in range(length)])
+    """Generate psuedorandom Nonce"""
+
+    randnum = random.randint(10 ** length, (10 ** (length + 1)) - 1)
+    return base64.b64encode(str(randnum).encode())
 
 def get_token():
     """Get OAuth Access token"""
@@ -46,13 +48,14 @@ def get_token():
     url = "https://api.twitter.com/oauth/request_token"
     parameters = {
         "oauth_consumer_key":consumer_key,
-        "oauth_nonce":get_nonce(),
+        "oauth_nonce":get_nonce(32),
         "oauth_callback":"https%3A%2F%2Ftwitter.com",
         "oauth_signature_method":"HMAC-SHA1",
         "oauth_timestamp":get_ntp_time(),
         "oauth_version":"1.0",
         }
 
+    print(parameters["oauth_nonce"])
     parameters["oauth_signature"] = get_signature(
             "POST",
             url,
@@ -67,8 +70,8 @@ def get_token():
         dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
 
     dst = dst[:-1]
-    print(dst)
-    # requests.get(url, auth=auth)
+    token = requests.get(url, headers={'Authorization': dst})
+    print(token)
 
 
 def get_signature(method, url, consumer_secret, token_secret, parameters):
