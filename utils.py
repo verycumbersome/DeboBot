@@ -4,6 +4,7 @@ import urllib.parse
 import random
 import base64
 import requests
+import logging
 
 from requests_oauthlib import OAuth1
 from collections import OrderedDict
@@ -14,6 +15,15 @@ import hmac
 
 consumer_key = os.environ.get("TWITTER_CONSUMER_KEY")
 consumer_secret = os.environ.get("TWITTER_CONSUMER_SECRET")
+oauth_token = "350639912-pPdscEZxEm0XpaeeekuBvtg6eqMpLXYqlwWbnz18"
+oauth_token_secret = "qdQTI4evVHaSriYx759GiHkKylekCleaKyMdawChwAA8h"
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.DEBUG)
+requests_log.propagate = True
+
 
 def percent_encoding(string):
     """Percent encode a string"""
@@ -42,36 +52,47 @@ def get_nonce(length=8):
     randnum = random.randint(10 ** length, (10 ** (length + 1)) - 1)
     return base64.b64encode(str(randnum).encode())
 
-def get_token():
-    """Get OAuth Access token"""
+def get_timeline(user, count):
+    url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 
-    url = "https://api.twitter.com/oauth/request_token"
-    parameters = {
+    auth = {
         "oauth_consumer_key":consumer_key,
-        "oauth_nonce":get_nonce(32),
-        "oauth_callback":"https%3A%2F%2Ftwitter.com",
+        "oauth_nonce":get_nonce(32).decode("utf-8"),
         "oauth_signature_method":"HMAC-SHA1",
         "oauth_timestamp":get_ntp_time(),
+        "oauth_token":oauth_token,
         "oauth_version":"1.0",
         }
+    parameters = {
+        "screen_name":user,
+        "count":str(count),
+        }
 
-    print(parameters["oauth_nonce"])
-    parameters["oauth_signature"] = get_signature(
+    auth["oauth_signature"] = get_signature(
             "POST",
             url,
-            parameters["oauth_consumer_key"],
-            "",
-            parameters
+            consumer_secret,
+            oauth_token_secret,
+            {**parameters, **auth}
             ).decode("utf-8")
 
-    dst = "Oauth"
+    auth = {k: percent_encoding(str(auth[k])) for k in sorted(auth)}
 
-    for item in parameters.items():
+    # Format Oauth authorization header
+    dst = "OAuth"
+    for item in auth.items():
         dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
-
     dst = dst[:-1]
-    token = requests.get(url, headers={'Authorization': dst})
-    print(token)
+
+    print("\n\n\n", dst, "\n\n\n")
+
+    timeline = requests.get(
+            url,
+            params=parameters,
+            headers={'Authorization': dst}
+            )
+
+    # print(timeline)
 
 
 def get_signature(method, url, consumer_secret, token_secret, parameters):
@@ -88,7 +109,7 @@ def get_signature(method, url, consumer_secret, token_secret, parameters):
     # key = b"CONSUMER_SECRET&" #If you dont have a token yet
     key = (consumer_secret + "&" + token_secret).encode()
 
-    hashed = hmac.new(key, output.encode(), sha1)
+    hashed = hmac.new(key, percent_encoding(output).encode(), sha1)
 
     # The signature
     return base64.b64encode(hashed.digest())

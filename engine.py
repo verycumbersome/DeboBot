@@ -8,10 +8,11 @@ def main():
     consumer_key = os.environ.get("TWITTER_CONSUMER_KEY")
     consumer_secret = os.environ.get("TWITTER_CONSUMER_SECRET")
 
-    ntp_time = utils.get_ntp_time()
-    nonce = utils.get_nonce(32)
+    # ntp_time = utils.get_ntp_time()
+    # nonce = utils.get_nonce(32)
 
-    token = utils.get_token()
+    # token = utils.get_token()
+    timeline = utils.get_timeline("twitterapi", 2)
     # signature = utils.get_signature(
             # True,
             # consumer_key,
