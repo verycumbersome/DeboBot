@@ -49,15 +49,17 @@ def get_ntp_time():
 def get_nonce(length=8):
     """Generate psuedorandom Nonce"""
 
-    randnum = random.randint(10 ** length, (10 ** (length + 1)) - 1)
-    return base64.b64encode(str(randnum).encode())
+    randnum = random.randint(10 ** (length - 1), (10 ** length) - 1)
+    # return base64.b64encode(str(randnum).encode())
+    return str(randnum)
 
 def get_timeline(user, count):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 
     auth = {
         "oauth_consumer_key":consumer_key,
-        "oauth_nonce":get_nonce(32).decode("utf-8"),
+        # "oauth_nonce":get_nonce(32).decode("utf-8"),
+        "oauth_nonce":get_nonce(32),
         "oauth_signature_method":"HMAC-SHA1",
         "oauth_timestamp":get_ntp_time(),
         "oauth_token":oauth_token,
@@ -77,7 +79,7 @@ def get_timeline(user, count):
             ).decode("utf-8")
 
     auth = {k: auth[k] for k in sorted(auth)}
-
+    print(auth["oauth_nonce"])
     # Format Oauth authorization header
     dst = "OAuth"
     for item in auth.items():
@@ -107,8 +109,6 @@ def get_signature(method, url, consumer_secret, token_secret, parameters):
         parameter_string += "&" + percent_encoding(item[0]) + "=" + percent_encoding(str(item[1]))
 
     output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
-
-    print(output, "\n\n")
 
     # key = b"CONSUMER_SECRET&" #If you dont have a token yet
     key = (consumer_secret + "&" + token_secret).encode()
