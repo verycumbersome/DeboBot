@@ -3,28 +3,20 @@ import json
 import re
 import pandas as pd
 
+import config
+
 def main():
     """Main function loop"""
-    twitter_names = [
-            "killmefam",
-            "darth_erogenous",
-            "adda_boi",
-            "poop420guy69",
-            "toomuchprotein",
-            "inclcore",
-            "rockanrollphoto"
-        ]
-
     data = []
 
-    for screen_name in twitter_names:
+    for screen_name in config.TWITTER_NAMES:
         method = "GET"
         url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
         parameters = {
             "screen_name":screen_name,
             "include_rts":"false",
             "exclude_replies":"true",
-            "count":"10",
+            "count":str(config.COUNT),
             }
         timeline = utils.make_call(method, url, parameters)
 
