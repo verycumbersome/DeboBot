@@ -1,20 +1,41 @@
 import utils
+import json
+import re
+import pandas as pd
 
 def main():
     """Main function loop"""
-    # ntp_time = utils.get_ntp_time()
-    # nonce = utils.get_nonce(32)
+    twitter_names = [
+            "killmefam",
+            "darth_erogenous",
+            "adda_boi",
+            "poop420guy69",
+            "toomuchprotein",
+            "inclcore",
+            "rockanrollphoto"
+        ]
 
-    # token = utils.get_token()
+    data = []
 
-    method = "GET"
-    url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-    parameters = {
-        "screen_name":"killmefam",
-        "count":"2",
-        }
-    timeline = utils.make_call(method, url, parameters)
-    print(timeline.content)
+    for screen_name in twitter_names:
+        method = "GET"
+        url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+        parameters = {
+            "screen_name":screen_name,
+            "include_rts":"false",
+            "exclude_replies":"true",
+            "count":"10",
+            }
+        timeline = utils.make_call(method, url, parameters)
+
+        for index, item in enumerate(json.loads(timeline.content)):
+            text = re.sub(r"http\S+", "", item["text"])
+            data.append(text)
+
+    df = pd.DataFrame(data)
+    df.to_csv("data/textdata.csv", index=False)
+
+    print(pd.read_csv("data/textdata.csv"))
 
 if __name__ == "__main__":
     main()

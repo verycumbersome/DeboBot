@@ -32,16 +32,21 @@ def percent_encoding(string):
 
 def get_ntp_time():
     """Return the NTP time diff in seconds"""
-    c = ntplib.NTPClient()
-    response = c.request('europe.pool.ntp.org', version=3)
-    ntp_time = round(
-        (datetime.now() - datetime.strptime(
-            ctime(response.offset),
-            "%a %b %d %H:%M:%S %Y")
-        ).total_seconds()
-    )
+    while(True):
+        try:
+            c = ntplib.NTPClient()
+            response = c.request('europe.pool.ntp.org', version=3)
+            ntp_time = round(
+                (datetime.now() - datetime.strptime(
+                    ctime(response.offset),
+                    "%a %b %d %H:%M:%S %Y")
+                ).total_seconds()
+            )
 
-    return ntp_time
+            return ntp_time
+
+        except:
+            pass
 
 def get_nonce(length=32):
     """Generate psuedorandom Nonce"""
