@@ -7,5 +7,5 @@ TWITTER_NAMES = [
     "inclcore",
     "rockanrollphoto"
 ]
-COUNT = 10
+COUNT = 5000
 
