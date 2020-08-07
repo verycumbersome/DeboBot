@@ -2,7 +2,6 @@
 import os
 import base64
 import random
-import logging
 import hmac
 from datetime import datetime
 from hashlib import sha1
@@ -15,11 +14,6 @@ consumer_secret = os.environ.get("TWITTER_CONSUMER_SECRET")
 oauth_token = os.environ.get("TWITTER_TOKEN")
 oauth_token_secret = os.environ.get("TWITTER_TOKEN_SECRET")
 
-logging.basicConfig()
-logging.getLogger().setLevel(logging.ERROR)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
 
 
 def percent_encoding(string):
@@ -50,7 +44,6 @@ def get_ntp_time():
 
 def get_nonce(length=32):
     """Generate psuedorandom Nonce"""
-
     randnum = random.randint(10 ** (length - 1), (10 ** length) - 1)
     data = base64.b64encode(str(randnum).encode())
 
@@ -90,23 +83,19 @@ def make_call(method, url, parameters):
 
 def get_signature(method, url, token_secret, parameters):
     """Create API request signature"""
-    # output = method + "&" + percent_encoding(url)
+    #Generate parameter string
     parameter_string = ""
-
-    # Sorted parameters for signature
     sorted_params = {k: percent_encoding(str(parameters[k])) for k in sorted(parameters)}
 
-    # Generate signature base string
     for item in sorted_params.items():
         parameter_string += "&" + percent_encoding(item[0]) + "=" + percent_encoding(str(item[1]))
 
+    #Append percent encoded method url and parameter string
     output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
-
-    # key = b"CONSUMER_SECRET&" #If you dont have a token yet
     key = (percent_encoding(consumer_secret) + "&" + percent_encoding(token_secret)).encode()
 
+    #Generate hash
     hashed = hmac.new(key, output.encode(), sha1)
 
-    # The signature
     return base64.b64encode(hashed.digest()).strip()
 
