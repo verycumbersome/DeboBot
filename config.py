@@ -1,5 +1,6 @@
 import os
 import logging
+import gpt_2_simple as gpt2
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.ERROR)
@@ -23,3 +24,7 @@ TWITTER_NAMES = [
 SCRAPE_TIMELINE_COUNT = 5000
 SCRAPE_DEPTH = 100
 
+model_name = "124M"
+if not os.path.isdir(os.path.join("models", model_name)):
+    print(f"Downloading {model_name} model...")
+    gpt2.download_gpt2(model_name=model_name)
