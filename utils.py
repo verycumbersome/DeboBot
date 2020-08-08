@@ -8,7 +8,18 @@ from hashlib import sha1
 from time import ctime
 import requests
 import ntplib
+import pandas as pd
+
 import config
+
+def convert_to_txt(path):
+    """Converts a CSV file to a TXT file to the /data/ directory"""
+    dst = ""
+    data = pd.read_csv(path).dropna()
+    for item in data["text"]:
+        dst += item + "\n"
+
+    print(dst)
 
 def percent_encoding(string):
     """Percent encode a string"""

@@ -1,6 +1,8 @@
 import os
 import logging
-import gpt_2_simple as gpt2
+
+from transformers import GPT2Model, GPT2Config
+from transformers import GPT2Tokenizer
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.ERROR)
@@ -8,6 +10,7 @@ requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
 
+# Data Scraping
 CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
 CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
 OAUTH_TOKEN = os.environ.get("TWITTER_TOKEN")
@@ -21,10 +24,9 @@ TWITTER_NAMES = [
     "inclcore",
     "rockanrollphoto"
 ]
-SCRAPE_TIMELINE_COUNT = 5000
-SCRAPE_DEPTH = 100
+SCRAPE_TIMELINE_COUNT = 50
+SCRAPE_DEPTH = 2
 
-model_name = "124M"
-if not os.path.isdir(os.path.join("models", model_name)):
-    print(f"Downloading {model_name} model...")
-    gpt2.download_gpt2(model_name=model_name)
+# GPT2 model / tokenizer
+TOKENIZER = GPT2Tokenizer.from_pretrained("gpt2")
+MODEL = GPT2Model.from_pretrained("gpt2")

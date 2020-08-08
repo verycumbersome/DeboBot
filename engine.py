@@ -19,6 +19,7 @@ def get_timeline(screen_name, depth):
             "screen_name":screen_name,
             "include_rts":"false",
             "exclude_replies":"true",
+            "tweet_mode":"extended",
             "count":str(config.SCRAPE_TIMELINE_COUNT),
             }
         if not max_id: parameters.pop("max_id")
@@ -27,7 +28,7 @@ def get_timeline(screen_name, depth):
 
         for item in json.loads(timeline.content):
             max_id = item["id"]
-            text = re.sub(r"http\S+", "", item["text"])
+            text = re.sub(r"http\S+", "", item["full_text"]) + "<eos>"
             data.append(text)
 
     return data
@@ -40,12 +41,14 @@ def main():
         for screen_name in config.TWITTER_NAMES:
             data["text"].extend(get_timeline(screen_name, config.SCRAPE_DEPTH))
 
-        print(data)
         df = pd.DataFrame(data=data)
         df.to_csv("data/textdata.csv", index=False)
 
-    for item in pd.read_csv("data/textdata.csv")["text"]:
-        print(item)
+    if "--txt" in sys.argv:
+        utils.convert_to_txt("data/textdata.csv")
+
+    # for item in pd.read_csv("data/textdata.csv")["text"]:
+        # print(item)
 
 if __name__ == "__main__":
     main()
