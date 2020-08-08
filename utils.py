@@ -6,6 +6,7 @@ import hmac
 from datetime import datetime
 from hashlib import sha1
 from time import ctime
+import tqdm
 import requests
 import ntplib
 import pandas as pd
@@ -14,12 +15,13 @@ import config
 
 def convert_to_txt(path):
     """Converts a CSV file to a TXT file to the /data/ directory"""
-    dst = ""
-    data = pd.read_csv(path).dropna()
-    for item in data["text"]:
-        dst += item + "\n"
+    with open("data/textdata.txt", "w+") as file:
+        dst = ""
+        data = pd.read_csv(path).dropna()
 
-    print(dst)
+        print("Writing file to txt")
+        for item in tqdm.tqdm(data["text"]):
+            file.write(item + "\n")
 
 def percent_encoding(string):
     """Percent encode a string"""

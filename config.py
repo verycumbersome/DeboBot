@@ -24,8 +24,8 @@ TWITTER_NAMES = [
     "inclcore",
     "rockanrollphoto"
 ]
-SCRAPE_TIMELINE_COUNT = 50
-SCRAPE_DEPTH = 2
+SCRAPE_TIMELINE_COUNT = 5000
+SCRAPE_DEPTH = 200
 
 # GPT2 model / tokenizer
 TOKENIZER = GPT2Tokenizer.from_pretrained("gpt2")

@@ -13,6 +13,8 @@ def get_timeline(screen_name, depth):
     data = []
     method = "GET"
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+
+    print("Scraping tweets from \'" + screen_name + "\'")
     for i in tqdm.tqdm(range(depth)):
         parameters = {
             "max_id":max_id - 1,
