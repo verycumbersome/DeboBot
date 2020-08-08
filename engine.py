@@ -1,33 +1,31 @@
-import utils
+import sys
 import json
 import re
 import pandas as pd
 import tqdm
 
 import config
+import utils
 
 def get_timeline(screen_name, depth):
     """Function to return values from a user's timeline"""
-    data = []
     max_id = 0
+    data = []
     method = "GET"
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
-
-    for i in range(depth):
+    for i in tqdm.tqdm(range(depth)):
         parameters = {
-            "max_id":max_id,
+            "max_id":max_id - 1,
             "screen_name":screen_name,
             "include_rts":"false",
             "exclude_replies":"true",
-            "count":str(config.COUNT),
+            "count":str(config.SCRAPE_TIMELINE_COUNT),
             }
         if not max_id: parameters.pop("max_id")
 
         timeline = utils.make_call(method, url, parameters)
 
-        print(json.loads(timeline.content))
         for item in json.loads(timeline.content):
-            # print(item)
             max_id = item["id"]
             text = re.sub(r"http\S+", "", item["text"])
             data.append(text)
@@ -36,18 +34,18 @@ def get_timeline(screen_name, depth):
 
 def main():
     """Main function"""
-    data = []
+    if "--train" in sys.argv:
+        data = {"text":[]}
 
-    # timeline = get_timeline("killmefam", 5)
-    # print(len(timeline))
+        for screen_name in config.TWITTER_NAMES:
+            data["text"].extend(get_timeline(screen_name, config.SCRAPE_DEPTH))
 
-    for screen_name in tqdm.tqdm(config.TWITTER_NAMES):
-        data.append(get_timeline(screen_name, 2))
+        print(data)
+        df = pd.DataFrame(data=data)
+        df.to_csv("data/textdata.csv", index=False)
 
-    df = pd.DataFrame(data)
-    df.to_csv("data/textdata.csv", index=False)
-
-    # print(pd.read_csv("data/textdata.csv"))
+    for item in pd.read_csv("data/textdata.csv")["text"]:
+        print(item)
 
 if __name__ == "__main__":
     main()

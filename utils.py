@@ -8,13 +8,7 @@ from hashlib import sha1
 from time import ctime
 import requests
 import ntplib
-
-consumer_key = os.environ.get("TWITTER_CONSUMER_KEY")
-consumer_secret = os.environ.get("TWITTER_CONSUMER_SECRET")
-oauth_token = os.environ.get("TWITTER_TOKEN")
-oauth_token_secret = os.environ.get("TWITTER_TOKEN_SECRET")
-
-
+import config
 
 def percent_encoding(string):
     """Percent encode a string"""
@@ -52,22 +46,20 @@ def get_nonce(length=32):
 def make_call(method, url, parameters):
     """Make a call to the Twitter API"""
     auth = {
-        "oauth_consumer_key":consumer_key,
+        "oauth_consumer_key":config.CONSUMER_KEY,
         "oauth_nonce":get_nonce(32).decode(),
         "oauth_signature_method":"HMAC-SHA1",
         "oauth_timestamp":get_ntp_time(),
-        "oauth_token":oauth_token,
+        "oauth_token":config.OAUTH_TOKEN,
         "oauth_version":"1.0",
         }
 
     auth["oauth_signature"] = get_signature(
         method,
         url,
-        oauth_token_secret,
+        config.OAUTH_TOKEN_SECRET,
         {**parameters, **auth}
         ).decode("utf-8")
-
-    auth = {k: auth[k] for k in sorted(auth)}
 
     # Format Oauth authorization header
     dst = "OAuth"
@@ -92,7 +84,7 @@ def get_signature(method, url, token_secret, parameters):
 
     #Append percent encoded method url and parameter string
     output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
-    key = (percent_encoding(consumer_secret) + "&" + percent_encoding(token_secret)).encode()
+    key = (percent_encoding(config.CONSUMER_SECRET) + "&" + percent_encoding(token_secret)).encode()
 
     #Generate hash
     hashed = hmac.new(key, output.encode(), sha1)
