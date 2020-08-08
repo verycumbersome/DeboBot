@@ -13,7 +13,6 @@ import requests
 
 import config
 import utils
-from model import GPT2Model
 
 
 def get_timeline(screen_name, depth):
@@ -39,7 +38,7 @@ def get_timeline(screen_name, depth):
 
         for item in json.loads(timeline.content):
             max_id = item["id"]
-            text = re.sub(r"http\S+", "", item["full_text"]) + "<eos>"
+            text = "<|startoftext|>" + re.sub(r"http\S+", "", item["full_text"]) + "<|endoftext|>"
             data.append(text)
 
     return data
