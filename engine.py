@@ -39,42 +39,48 @@ def get_timeline(screen_name, depth):
         if (timeline.status_code == 200):
             for item in json.loads(timeline.content):
                 max_id = item["id"]
-                text = re.sub(r"http\S+", "", item["full_text"]) + "<eos>"
+                text = re.sub(r"http\S+", "", item["full_text"])
                 data.append(text)
-
-        else:
-            print(timeline.content, end="\r")
 
     return data
 
 def main():
     """Main function"""
-    if "--scrape" in sys.argv:
-        data = {"text":[]}
 
-        for screen_name in config.TWITTER_NAMES:
-            data["text"].extend(get_timeline(screen_name, config.SCRAPE_DEPTH))
+    for index, arg in enumerate(sys.argv):
+        if arg=="--scrape":
+            data = {"text":[]}
 
-        df = pd.DataFrame(data=data)
-        df.to_csv("data/textdata.csv", index=False)
+            for screen_name in config.TWITTER_NAMES:
+                data["text"].extend(get_timeline(screen_name, config.SCRAPE_DEPTH))
 
-    if "--txt" in sys.argv:
-        utils.convert_to_txt("data/textdata.csv")
+            df = pd.DataFrame(data=data)
+            df.to_csv("data/textdata.csv", index=False)
 
-    if "--gen" in sys.argv:
-        sess = gpt2.start_tf_sess()
-        gpt2.load_gpt2(sess, run_name='run1')
+        if arg=="--txt":
+            utils.convert_to_txt("data/textdata.csv")
 
-        while(True):
-            text = gpt2.generate(sess,
-                    length=250,
-                    temperature=0.7,
-                    prefix=input("Enter prefix:"),
-                    nsamples=1,
-                    batch_size=1
-                    )
+        if arg=="--user":
+            print(sys.argv[index + 1])
 
-            print(text)
+        if arg=="--gen":
+            print(sys.argv[index + 1])
+            sess = gpt2.start_tf_sess()
+            gpt2.load_gpt2(sess, run_name='run1')
+
+            while(True):
+                text = gpt2.generate(
+                        sess,
+                        length=250,
+                        temperature=0.85,
+                        include_prefix=False,
+                        # prefix=input("Enter prefix:"),
+                        truncate='<|endoftext|>',
+                        nsamples=5,
+                        batch_size=5
+                        )
+
+                print(text)
 
 if __name__ == "__main__":
     main()
