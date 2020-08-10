@@ -1,15 +1,15 @@
 import sys
 import json
+import os
 import re
+import requests
+import datetime
 import pandas as pd
-import tqdm
-import torch
-import re
 import numpy as np
 import tensorflow as tf
 import gpt_2_simple as gpt2
-import os
-import requests
+import tqdm
+import torch
 
 import config
 import utils
@@ -74,14 +74,17 @@ def main():
             sess = gpt2.start_tf_sess()
             gpt2.load_gpt2(sess, run_name='run1')
 
-            gen_file = 'gpt2_gentext_{:%Y%m%d_%H%M%S}.txt'.format(datetime.utcnow())
+            gen_file = "gpt2_gentext_{:%Y%m%d_%H%M%S}.txt".format(datetime.datetime.utcnow())
 
-            gpt2.generate_to_file(sess,
-                      destination_path=gen_file,
-                      length=500,
-                      temperature=0.7,
-                      nsamples=100,
-                      batch_size=20
+            print(gen_file)
+
+            gpt2.generate_to_file(
+                sess,
+                destination_path=gen_file,
+                length=500,
+                temperature=0.7,
+                nsamples=100,
+                batch_size=20
                       )
 
             # text = gpt2.generate(
