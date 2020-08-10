@@ -2,7 +2,7 @@ import random
 import pandas as pd
 from flask import Flask
 
-import src.utils
+# import src.utils
 
 app = Flask(__name__)
 
