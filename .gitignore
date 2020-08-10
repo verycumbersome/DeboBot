@@ -1,4 +1,6 @@
-checkpoint/
+src/checkpoint/
+src/models/
+src/samples/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
