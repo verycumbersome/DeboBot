@@ -16,7 +16,7 @@ def home_view():
 
     training = pd.read_csv("../src/data/textdata.csv")
 
-    while ([True for item in training["text"] if tweet == item]):
+    while ([True for item in training["text"] if tweet.lower() == item.lower()]):
         print("UNORIGINAL TWEET:", tweet)
         tweet = random.choice(tweets)
 
