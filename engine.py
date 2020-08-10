@@ -25,14 +25,16 @@ def get_timeline(screen_name, depth):
     print("Scraping tweets from \'" + screen_name + "\'")
     for i in tqdm.tqdm(range(depth)):
         parameters = {
-                "max_id":max_id - 1,
-                "screen_name":screen_name,
-                "include_rts":"false",
-                "exclude_replies":"true",
-                "tweet_mode":"extended",
-                "count":str(config.SCRAPE_TIMELINE_COUNT),
-                }
-        if not max_id: parameters.pop("max_id")
+            "max_id": max_id - 1,
+            "screen_name": screen_name,
+            "include_rts": "false",
+            "exclude_replies": "true",
+            "tweet_mode": "extended",
+            "count": str(config.SCRAPE_TIMELINE_COUNT),
+            }
+
+        if not max_id:
+            parameters.pop("max_id")
 
         timeline = utils.make_call(method, url, parameters)
 
@@ -44,26 +46,27 @@ def get_timeline(screen_name, depth):
 
     return data
 
+
 def main():
     """Main function"""
-
     for index, arg in enumerate(sys.argv):
-        if arg=="--scrape":
-            data = {"text":[]}
+        if arg == "--scrape":
+            data = {"text": []}
 
             for screen_name in config.TWITTER_NAMES:
-                data["text"].extend(get_timeline(screen_name, config.SCRAPE_DEPTH))
+                data["text"].extend(get_timeline(
+                    screen_name, config.SCRAPE_DEPTH))
 
             df = pd.DataFrame(data=data)
             df.to_csv("data/textdata.csv", index=False)
 
-        if arg=="--txt":
+        if arg == "--txt":
             utils.convert_to_txt("data/textdata.csv")
 
-        if arg=="--user":
+        if arg == "--user":
             print(sys.argv[index + 1])
 
-        if arg=="--gen":
+        if arg == "--gen":
             print(sys.argv[index + 1])
             sess = gpt2.start_tf_sess()
             gpt2.load_gpt2(sess, run_name='run1')
@@ -81,6 +84,7 @@ def main():
                         )
 
                 print(text)
+
 
 if __name__ == "__main__":
     main()

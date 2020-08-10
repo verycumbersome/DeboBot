@@ -21,7 +21,7 @@ def convert_to_txt(path):
 
         print("Writing file to txt")
         for item in tqdm.tqdm(data["text"]):
-            item = item.replace("<eos>", "<|endoftext|>\n<|startoftext|>")
+            item = "<|startoftext|>" + item + "<|endoftext|>\n"
             file.write(item)
 
 def percent_encoding(string):
