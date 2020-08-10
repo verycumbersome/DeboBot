@@ -1,5 +1,8 @@
 import random
+import pandas as pd
 from flask import Flask
+
+import src.utils
 
 app = Flask(__name__)
 
@@ -9,7 +12,15 @@ def home_view():
         tweets = file.read().split("<|startoftext|>")
         tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
-        return "<h1>" + random.choice(tweets) + "</h1>"
+    tweet = random.choice(tweets)
+
+    training = pd.read_csv("../src/data/textdata.csv")
+
+    while ([True for item in training["text"] if tweet == item]):
+        print("UNORIGINAL TWEET:", tweet)
+        tweet = random.choice(tweets)
+
+    return "<h1>" + tweet + "</h1>"
 
 
 if __name__ == "__main__":
