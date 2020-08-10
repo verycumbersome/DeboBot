@@ -7,6 +7,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def home_view():
     tweets = []
@@ -18,20 +19,17 @@ def home_view():
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
     print(len(tweets))
 
-    #Select a random tweet from the options
+    # Select a random tweet from the options
     tweet = random.choice(tweets)
 
+    # Checks if the generated tweets is in the orignal dataset
     training = pd.read_csv("../src/data/textdata.csv")
-
     while ([True for item in training["text"] if str(tweet).lower() == str(item).lower()]):
         print("UNORIGINAL TWEET:", tweet)
         tweet = random.choice(tweets)
-
-    print(tweet)
 
     return "<h1>" + tweet + "</h1>"
 
 
 if __name__ == "__main__":
     app.run()
-

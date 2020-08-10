@@ -1,15 +1,11 @@
+"""Engine for the twitter scraper and model text generation"""
 import sys
 import json
-import os
 import re
-import requests
 import datetime
 import pandas as pd
-import numpy as np
-import tensorflow as tf
 import gpt_2_simple as gpt2
 import tqdm
-import torch
 
 import config
 import utils
@@ -23,7 +19,7 @@ def get_timeline(screen_name, depth):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 
     print("Scraping tweets from \'" + screen_name + "\'")
-    for i in tqdm.tqdm(range(depth)):
+    for _ in tqdm.tqdm(range(depth)):
         parameters = {
             "max_id": max_id - 1,
             "screen_name": screen_name,
@@ -38,7 +34,7 @@ def get_timeline(screen_name, depth):
 
         timeline = utils.make_call(method, url, parameters)
 
-        if (timeline.status_code == 200):
+        if timeline.status_code == 200:
             for item in json.loads(timeline.content):
                 max_id = item["id"]
                 text = re.sub(r"http\S+", "", item["full_text"])
@@ -46,9 +42,12 @@ def get_timeline(screen_name, depth):
 
     return data
 
+
 def error(msg):
+    """Error function for program"""
     print("ERROR:", msg)
     exit()
+
 
 def main():
     """Main function"""
@@ -64,7 +63,7 @@ def main():
                 df = pd.DataFrame(data=data)
                 df.to_csv("data/textdata.csv", index=False)
 
-            except:
+            except Exception:
                 error("Must enter scrape depth and length")
 
         if arg == "--txt":
@@ -85,7 +84,7 @@ def main():
                 temperature=0.7,
                 nsamples=100,
                 batch_size=20
-                      )
+                )
 
             # text = gpt2.generate(
                     # sess,
