@@ -1,22 +1,30 @@
+import os
 import random
 import pandas as pd
 from flask import Flask
 
-import src.utils
+# import src.utils
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def home_view():
-    with open("../gpt2_gentext_20200810_015757.txt", "r") as file:
-        tweets = file.read().split("<|startoftext|>")
-        tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
+    tweets = []
+    text_path = "../text/"
+    for file in os.listdir(text_path):
+        with open(text_path + file, "r") as fp:
+            tweets.extend(fp.read().split("<|startoftext|>"))
+    # Remove duplicates and exd of text
+    tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
+    print(len(tweets))
 
+    # Select a random tweet from the options
     tweet = random.choice(tweets)
 
+    # Checks if the generated tweets is in the orignal dataset
     training = pd.read_csv("../src/data/textdata.csv")
-
-    while ([True for item in training["text"] if tweet == item]):
+    while ([True for item in training["text"] if str(tweet).lower() == str(item).lower()]):
         print("UNORIGINAL TWEET:", tweet)
         tweet = random.choice(tweets)
 
@@ -25,4 +33,3 @@ def home_view():
 
 if __name__ == "__main__":
     app.run()
-
