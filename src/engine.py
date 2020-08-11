@@ -34,6 +34,8 @@ def get_timeline(screen_name, depth):
 
         timeline = utils.make_call(method, url, parameters)
 
+        print(timeline.content)
+
         if timeline.status_code == 200:
             for item in json.loads(timeline.content):
                 max_id = item["id"]
@@ -41,6 +43,23 @@ def get_timeline(screen_name, depth):
                 data.append(text)
 
     return data
+
+
+def make_status_update(status):
+    """Function to make a Twitter status update"""
+    method = "POST"
+    url = "https://api.twitter.com/1.1/statuses/update.json"
+    parameters = {
+        "status": status,
+        }
+
+    timeline = utils.make_call(method, url, parameters)
+
+    print(timeline.content)
+
+    if timeline.status_code == 200:
+        print("Success")
+
 
 
 def error(msg):
@@ -85,6 +104,10 @@ def main():
                 nsamples=100,
                 batch_size=20
                 )
+
+        if arg == "--test":
+            print(get_timeline("killmefam", 2))
+            # make_status_update(utils.percent_encoding("test"))
 
             # text = gpt2.generate(
                     # sess,
