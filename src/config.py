@@ -15,16 +15,15 @@ CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
 CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
 OAUTH_TOKEN = os.environ.get("TWITTER_TOKEN")
 OAUTH_TOKEN_SECRET = os.environ.get("TWITTER_TOKEN_SECRET")
-
-# TWITTER_NAMES = [
-    # "EvergreenGothic",
-    # "OlympiaGothic",
-    # "OlympiaNice",
-    # "LaceyGothic",
-    # "HarborGothic",
-    # "overheardwwu",
-    # "WWUgothic"
-# ]
+TWITTER_NAMES = [
+    "EvergreenGothic",
+    "OlympiaGothic",
+    "OlympiaNice",
+    "LaceyGothic",
+    "HarborGothic",
+    "overheardwwu",
+    "WWUgothic"
+]
 TWITTER_NAMES = [
     "vsshole",
     "camposting",

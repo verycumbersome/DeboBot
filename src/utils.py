@@ -65,7 +65,6 @@ def get_nonce(length=32):
 def make_call(method, url, parameters):
     """Make a call to the Twitter API"""
     auth = {
-        "include_entities": "true",
         "oauth_consumer_key": config.CONSUMER_KEY,
         "oauth_nonce": get_nonce(32).decode(),
         "oauth_signature_method": "HMAC-SHA1",

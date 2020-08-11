@@ -3,8 +3,7 @@ import random
 import pandas as pd
 from flask import Flask
 
-import utils
-import engine
+# import src.utils
 
 app = Flask(__name__)
 
@@ -18,6 +17,7 @@ def home_view():
             tweets.extend(fp.read().split("<|startoftext|>"))
     # Remove duplicates and exd of text
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
+    print(len(tweets))
 
     # Select a random tweet from the options
     tweet = random.choice(tweets)
@@ -27,8 +27,6 @@ def home_view():
     while ([True for item in training["text"] if str(tweet).lower() == str(item).lower()]):
         print("UNORIGINAL TWEET:", tweet)
         tweet = random.choice(tweets)
-
-    engine.make_status_update(tweet)
 
     return "<h1>" + tweet + "</h1>"
 
