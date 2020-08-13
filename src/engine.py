@@ -17,12 +17,11 @@ def make_status_update(status):
     url = "https://api.twitter.com/1.1/statuses/update.json"
     parameters = {
             "status":status,
-            # "include_entities":"true",
         }
     timeline = utils.make_call(method, url, parameters)
-    # print("Posting tweet \'" + status + "\'")
-    print(timeline.content)
+    print(timeline.json())
 
+    print(timeline.content)
 
 def get_timeline(screen_name, depth):
     """Function to return values from a user's timeline"""
@@ -88,8 +87,6 @@ def main():
 
             gen_file = "gpt2_gentext_{:%Y%m%d_%H%M%S}.txt".format(datetime.datetime.utcnow())
 
-            print(gen_file)
-
             gpt2.generate_to_file(
                 sess,
                 destination_path=gen_file,
@@ -100,7 +97,10 @@ def main():
                 )
 
         if arg == "--post":
-            make_status_update(argv[index + 1])
+            tweet = utils.get_random_tweet().strip()
+            # tweet = "Hello Ladies + Gentlemen, a signed OAuth request!".replace(" ", "+")
+
+            make_status_update(tweet)
 
 if __name__ == "__main__":
     main()

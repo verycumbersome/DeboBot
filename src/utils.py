@@ -1,4 +1,5 @@
 """Utils for Twitter API"""
+import os
 import base64
 import random
 import hmac
@@ -7,10 +8,32 @@ from hashlib import sha1
 from time import ctime
 import tqdm
 import requests
+import urllib
 import ntplib
 import pandas as pd
 
 import config
+
+
+def get_random_tweet():
+    tweets = []
+    text_path = "../text/"
+    for file in os.listdir(text_path):
+        with open(text_path + file, "r") as fp:
+            tweets.extend(fp.read().split("<|startoftext|>"))
+    # Remove duplicates and exd of text
+    tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
+
+    # Select a random tweet from the options
+    tweet = random.choice(tweets)
+
+    # Checks if the generated tweets is in the orignal dataset
+    training = pd.read_csv("../src/data/textdata.csv")
+    while ([True for item in training["text"] if str(tweet).lower() == str(item).lower()]):
+        print("UNORIGINAL TWEET:", tweet)
+        tweet = random.choice(tweets)
+
+    return tweet
 
 
 def convert_to_txt(path):
@@ -86,7 +109,7 @@ def make_call(method, url, parameters):
         dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
     dst = dst[:-1]
 
-    print(dst)
+    # parameters = {k:percent_encoding(v) for k, v in parameters.items()}
 
     if method == "GET":
         return requests.get(
@@ -96,9 +119,10 @@ def make_call(method, url, parameters):
             )
 
     if method == "POST":
+        print(parameters)
         return requests.post(
             url,
-            params=parameters,
+            data=parameters,
             headers={'Authorization': dst}
             )
 
@@ -107,13 +131,20 @@ def get_signature(method, url, token_secret, parameters):
     """Create API request signature"""
     # Generate parameter string
     parameter_string = ""
-    sorted_params = {k: percent_encoding(str(parameters[k])) for k in sorted(parameters)}
+    sorted_params = {k: str(parameters[k]) for k in sorted(parameters)}
+
+    print(sorted_params)
 
     for item in sorted_params.items():
         parameter_string += "&" + percent_encoding(item[0]) + "=" + percent_encoding(str(item[1]))
 
+    print(parameter_string)
+    print()
+
     # Append percent encoded method url and parameter string
     output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
+
+    print(output)
 
     key = (percent_encoding(config.CONSUMER_SECRET) + "&" + percent_encoding(token_secret)).encode()
 
