@@ -13,6 +13,8 @@ def home_view():
     # Gets a random tweet from 
     tweet = get_random_tweet()
 
+    engine.make_status_update(tweet)
+
     return "<h1>" + tweet + "</h1>"
 
 

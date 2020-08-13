@@ -97,8 +97,7 @@ def main():
                 )
 
         if arg == "--post":
-            tweet = utils.get_random_tweet().strip()
-            # tweet = "Hello Ladies + Gentlemen, a signed OAuth request!".replace(" ", "+")
+            tweet = utils.get_random_tweet()
 
             make_status_update(tweet)
 

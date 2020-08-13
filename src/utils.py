@@ -33,7 +33,7 @@ def get_random_tweet():
         print("UNORIGINAL TWEET:", tweet)
         tweet = random.choice(tweets)
 
-    return tweet
+    return tweet.strip()
 
 
 def convert_to_txt(path):
