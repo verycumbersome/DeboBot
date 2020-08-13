@@ -1,4 +1,5 @@
 """Engine for the twitter scraper and model text generation"""
+import os
 import sys
 import json
 import re

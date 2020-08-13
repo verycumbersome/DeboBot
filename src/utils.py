@@ -19,7 +19,7 @@ file_dir = os.path.dirname(__file__)
 
 def get_random_tweet():
     tweets = []
-    text_path = os.path.join(file_dir, "text/")
+    text_path = os.path.join(file_dir, "../text/")
     for file in os.listdir(text_path):
         with open(text_path + file, "r") as fp:
             tweets.extend(fp.read().split("<|startoftext|>"))
@@ -28,7 +28,8 @@ def get_random_tweet():
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
     # Checks if the generated tweets is in the orignal dataset
-    training_path = os.path.join(file_dir, "text/")
+    training_path = os.path.join(file_dir, "data/textdata.csv")
+    print(training_path)
     training = pd.read_csv(training_path)
 
     while(True):
@@ -47,7 +48,7 @@ def get_random_tweet():
 
 def convert_to_txt(path):
     """Converts a CSV file to a TXT file to the /data/ directory"""
-    text_data_path = os.path.join(file_dir, "data/textdata.txt")
+    text_data_path = os.path.join(file_dir, "../data/textdata.txt")
     with open(text_data_path, "w+") as file:
         data = pd.read_csv(path).dropna()
 
