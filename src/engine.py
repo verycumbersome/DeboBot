@@ -115,14 +115,8 @@ def main():
             make_status_update(tweet)
 
 
-        if arg == "--user_scrape":
-            handle = sys.argv[index + 1]
-            depth = sys.argv[index + 2]
-            timeline = get_timeline(str(handle), int(depth), True)
-
-            print(timeline)
-
-    print(utils.get_random_tweet())
+        if arg == "--clean":
+            timeline = get_timeline("peepeemann", 2, True)
 
 
 if __name__ == "__main__":
