@@ -17,7 +17,7 @@ import config
 
 def get_random_tweet():
     tweets = []
-    text_path = "/text/"
+    text_path = "text/"
     for file in os.listdir(text_path):
         with open(text_path + file, "r") as fp:
             tweets.extend(fp.read().split("<|startoftext|>"))
