@@ -18,10 +18,9 @@ def make_status_update(status):
     parameters = {
             "status":status,
         }
+    print("Making post \'" + status + "\'")
     timeline = utils.make_call(method, url, parameters)
-    print(timeline.json())
 
-    print(timeline.content)
 
 def get_timeline(screen_name, depth):
     """Function to return values from a user's timeline"""

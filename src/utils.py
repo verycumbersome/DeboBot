@@ -119,7 +119,6 @@ def make_call(method, url, parameters):
             )
 
     if method == "POST":
-        print(parameters)
         return requests.post(
             url,
             data=parameters,
@@ -133,18 +132,11 @@ def get_signature(method, url, token_secret, parameters):
     parameter_string = ""
     sorted_params = {k: str(parameters[k]) for k in sorted(parameters)}
 
-    print(sorted_params)
-
     for item in sorted_params.items():
         parameter_string += "&" + percent_encoding(item[0]) + "=" + percent_encoding(str(item[1]))
 
-    print(parameter_string)
-    print()
-
     # Append percent encoded method url and parameter string
     output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
-
-    print(output)
 
     key = (percent_encoding(config.CONSUMER_SECRET) + "&" + percent_encoding(token_secret)).encode()
 
