@@ -17,7 +17,7 @@ import config
 
 def get_random_tweet():
     tweets = []
-    text_path = "../text/"
+    text_path = "/text/"
     for file in os.listdir(text_path):
         with open(text_path + file, "r") as fp:
             tweets.extend(fp.read().split("<|startoftext|>"))
@@ -25,7 +25,7 @@ def get_random_tweet():
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
     # Checks if the generated tweets is in the orignal dataset
-    training = pd.read_csv("../src/data/textdata.csv")
+    training = pd.read_csv("/src/data/textdata.csv")
     while(True):
         # Select a random tweet from the options
         tweet = random.choice(tweets)
