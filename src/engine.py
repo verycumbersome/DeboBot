@@ -10,6 +10,8 @@ import tqdm
 import config
 import utils
 
+file_dir = os.path.dirname(__file__)
+
 
 def delete_tweet(tweet_id):
     """Function to delete a post"""
@@ -93,7 +95,8 @@ def main():
                 error("Must enter scrape depth and length")
 
         if arg == "--txt":
-            utils.convert_to_txt("data/textdata.csv")
+            textdata_path = os.path.join(file_dir, "data/textdata.csv")
+            utils.convert_to_txt(textdata_path)
 
         if arg == "--gen":
             sess = gpt2.start_tf_sess()

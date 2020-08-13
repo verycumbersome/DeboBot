@@ -14,18 +14,23 @@ import pandas as pd
 
 import config
 
+file_dir = os.path.dirname(__file__)
+
 
 def get_random_tweet():
     tweets = []
-    text_path = "text/"
+    text_path = os.path.join(file_dir, "text/")
     for file in os.listdir(text_path):
         with open(text_path + file, "r") as fp:
             tweets.extend(fp.read().split("<|startoftext|>"))
+
     # Remove duplicates and exd of text
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
     # Checks if the generated tweets is in the orignal dataset
-    training = pd.read_csv("src/data/textdata.csv")
+    training_path = os.path.join(file_dir, "text/")
+    training = pd.read_csv(training_path)
+
     while(True):
         # Select a random tweet from the options
         tweet = random.choice(tweets)
@@ -42,7 +47,8 @@ def get_random_tweet():
 
 def convert_to_txt(path):
     """Converts a CSV file to a TXT file to the /data/ directory"""
-    with open("data/textdata.txt", "w+") as file:
+    text_data_path = os.path.join(file_dir, "data/textdata.txt")
+    with open(text_data_path, "w+") as file:
         data = pd.read_csv(path).dropna()
 
         print("Writing file to txt")
