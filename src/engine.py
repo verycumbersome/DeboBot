@@ -11,6 +11,17 @@ import config
 import utils
 
 
+def delete_tweet(tweet_id):
+    """Function to delete a post"""
+    method = "POST"
+    url = "https://api.twitter.com/1.1/statuses/destroy/" + str(tweet_id) + ".json"
+    parameters = {
+            "id":tweet_id,
+        }
+    print("Deleting tweet \'" + str(tweet_id) + "\'")
+    timeline = utils.make_call(method, url, parameters)
+
+
 def make_status_update(status):
     """Function to make a status update"""
     method = "POST"
@@ -22,7 +33,7 @@ def make_status_update(status):
     timeline = utils.make_call(method, url, parameters)
 
 
-def get_timeline(screen_name, depth):
+def get_timeline(screen_name, depth, prune_tweets=False):
     """Function to return values from a user's timeline"""
     max_id = 0
     data = []
@@ -50,6 +61,10 @@ def get_timeline(screen_name, depth):
                 max_id = item["id"]
                 text = re.sub(r"http\S+", "", item["full_text"])
                 data.append(text)
+
+                if prune_tweets and item["favorite_count"] < 1:
+                    delete_tweet(item["id"])
+
 
     return data
 
@@ -97,8 +112,18 @@ def main():
 
         if arg == "--post":
             tweet = utils.get_random_tweet()
-
             make_status_update(tweet)
+
+
+        if arg == "--user_scrape":
+            handle = sys.argv[index + 1]
+            depth = sys.argv[index + 2]
+            timeline = get_timeline(str(handle), int(depth), True)
+
+            print(timeline)
+
+    print(utils.get_random_tweet())
+
 
 if __name__ == "__main__":
     main()

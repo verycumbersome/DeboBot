@@ -24,16 +24,20 @@ def get_random_tweet():
     # Remove duplicates and exd of text
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
-    # Select a random tweet from the options
-    tweet = random.choice(tweets)
-
     # Checks if the generated tweets is in the orignal dataset
     training = pd.read_csv("../src/data/textdata.csv")
-    while ([True for item in training["text"] if str(tweet).lower() == str(item).lower()]):
-        print("UNORIGINAL TWEET:", tweet)
+    while(True):
+        # Select a random tweet from the options
         tweet = random.choice(tweets)
 
-    return tweet.strip()
+        unoriginal = [True for item in training["text"] if str(tweet).lower() == str(item).lower()]
+        offensive = [True for item in config.STOP_WORDS if item in tweet]
+
+        print(unoriginal)
+        print(offensive)
+
+        if not (unoriginal or offensive):
+            return tweet.strip()
 
 
 def convert_to_txt(path):
