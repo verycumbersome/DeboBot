@@ -25,7 +25,7 @@ def get_random_tweet():
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
     # Checks if the generated tweets is in the orignal dataset
-    training = pd.read_csv("/src/data/textdata.csv")
+    training = pd.read_csv("src/data/textdata.csv")
     while(True):
         # Select a random tweet from the options
         tweet = random.choice(tweets)
