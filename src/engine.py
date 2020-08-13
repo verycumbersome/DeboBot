@@ -4,11 +4,24 @@ import json
 import re
 import datetime
 import pandas as pd
-import gpt_2_simple as gpt2
+# import gpt_2_simple as gpt2
 import tqdm
 
 import config
 import utils
+
+
+def make_status_update(status):
+    """Function to make a status update"""
+    method = "POST"
+    url = "https://api.twitter.com/1.1/statuses/update.json"
+    parameters = {
+            "status":status,
+            # "include_entities":"true",
+        }
+    timeline = utils.make_call(method, url, parameters)
+    # print("Posting tweet \'" + status + "\'")
+    print(timeline.content)
 
 
 def get_timeline(screen_name, depth):
@@ -86,17 +99,8 @@ def main():
                 batch_size=20
                 )
 
-            # text = gpt2.generate(
-                    # sess,
-                    # length=250,
-                    # temperature=0.7,
-                    # prefix = "<|startoftext|>",
-                    # include_prefix=False,
-                    # # prefix=input("Enter prefix:"),
-                    # truncate='<|endoftext|>',
-                    # nsamples=1000,
-                    # batch_size=5
-                    # )
+        if arg == "--post":
+            make_status_update(argv[index + 1])
 
 if __name__ == "__main__":
     main()

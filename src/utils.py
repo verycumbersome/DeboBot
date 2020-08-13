@@ -86,11 +86,21 @@ def make_call(method, url, parameters):
         dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
     dst = dst[:-1]
 
-    return requests.get(
-        url,
-        params=parameters,
-        headers={'Authorization': dst}
-        )
+    print(dst)
+
+    if method == "GET":
+        return requests.get(
+            url,
+            params=parameters,
+            headers={'Authorization': dst}
+            )
+
+    if method == "POST":
+        return requests.post(
+            url,
+            params=parameters,
+            headers={'Authorization': dst}
+            )
 
 
 def get_signature(method, url, token_secret, parameters):
@@ -104,6 +114,7 @@ def get_signature(method, url, token_secret, parameters):
 
     # Append percent encoded method url and parameter string
     output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
+
     key = (percent_encoding(config.CONSUMER_SECRET) + "&" + percent_encoding(token_secret)).encode()
 
     # Generate hash
