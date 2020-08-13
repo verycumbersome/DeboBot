@@ -114,7 +114,6 @@ def main():
             tweet = utils.get_random_tweet()
             make_status_update(tweet)
 
-
         if arg == "--clean":
             timeline = get_timeline("peepeemann", 2, True)
 

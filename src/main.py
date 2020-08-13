@@ -11,10 +11,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def home_view():
-    # Gets a random tweet from 
+    # Gets a random tweet from the generated tweets
     tweet = utils.get_random_tweet()
 
-    engine.make_status_update(tweet)
+    # engine.make_status_update(tweet)
 
     return "<h1>" + tweet + "</h1>"
 
