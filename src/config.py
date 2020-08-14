@@ -34,10 +34,10 @@ TWITTER_NAMES = [
     # "vsshole",
     # "camposting",
     # "darth_erogenous",
-    "killmefam",
+    # "killmefam",
     # "dril",
     # "poop420guy69",
-    # "PeterXinping",
+    "PeterXinping",
     # "toomuchprotein",
     # "rockanrollphoto"
     # "inclcore",

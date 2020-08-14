@@ -52,8 +52,8 @@ def get_timeline(screen_name, depth, prune_tweets=False):
     method = "GET"
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
 
-    print("Scraping tweets from \'" + screen_name + "\'")
-    for _ in tqdm.tqdm(range(depth)):
+    # print("Scraping tweets from \'" + screen_name + "\'")
+    for _ in tqdm.tqdm(range(depth), desc=screen_name):
         parameters = {
             "max_id": max_id - 1,
             "screen_name": screen_name,
@@ -82,6 +82,7 @@ def get_timeline(screen_name, depth, prune_tweets=False):
 
             # If the response code is not "Ok" remain looping
             else:
+                time.sleep(3)
                 pass
 
 
