@@ -18,6 +18,7 @@ file_dir = os.path.dirname(__file__)
 
 
 def get_random_tweet():
+    """Returns a random tweet from the directory of generated tweets"""
     tweets = []
     text_path = os.path.join(file_dir, "../text/")
     for file in os.listdir(text_path):
@@ -36,26 +37,34 @@ def get_random_tweet():
         # Select a random tweet from the options
         tweet = random.choice(tweets)
 
+        # Check for both originality of a tweet and if the tweet contains any offensive stop words
         unoriginal = [True for item in training["text"] if str(tweet).lower() == str(item).lower()]
         offensive = [True for item in config.STOP_WORDS if item in tweet]
-
-        print(unoriginal)
-        print(offensive)
 
         if not (unoriginal or offensive):
             return tweet.strip()
 
 
-def convert_to_txt(path):
+def csv_to_txt(path):
     """Converts a CSV file to a TXT file to the /data/ directory"""
-    text_data_path = os.path.join(file_dir, "../data/textdata.txt")
-    with open(text_data_path, "w+") as file:
-        data = pd.read_csv(path).dropna()
+    output = []
 
-        print("Writing file to txt")
-        for item in tqdm.tqdm(data["text"]):
-            item = "<|startoftext|>" + item + "<|endoftext|>\n"
+    # Add all values from csv files in data/ to output
+    csv_dir_path = os.path.join(file_dir, "data/")
+    for csv_path in os.listdir(csv_dir_path):
+        if csv_path.endswith(".csv"):
+            data = pd.read_csv(os.path.join(csv_dir_path, csv_path)).dropna()
+
+            print("Writing file to txt")
+            for item in tqdm.tqdm(data["text"]):
+                item = "<|startoftext|>" + item + "<|endoftext|>\n"
+                output.append(item)
+
+    textfile_path = os.path.join(file_dir, "../textdata.txt")
+    with open(textfile_path, "w+") as file:
+        for item in output:
             file.write(item)
+
 
 
 def percent_encoding(string):

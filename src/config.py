@@ -31,16 +31,16 @@ STOP_WORDS = [
     "dyke",
     ]
 TWITTER_NAMES = [
-    "vsshole",
-    "camposting",
-    "darth_erogenous",
+    # "vsshole",
+    # "camposting",
+    # "darth_erogenous",
     "killmefam",
-    "dril",
-    "poop420guy69",
-    "PeterXinping",
-    "toomuchprotein",
-    "rockanrollphoto"
-    "inclcore",
+    # "dril",
+    # "poop420guy69",
+    # "PeterXinping",
+    # "toomuchprotein",
+    # "rockanrollphoto"
+    # "inclcore",
 ]
 SCRAPE_TIMELINE_COUNT = 5000
-SCRAPE_DEPTH = 300
+SCRAPE_DEPTH = 900
