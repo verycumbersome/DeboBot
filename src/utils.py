@@ -29,9 +29,14 @@ def get_random_tweet():
     tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
 
     # Checks if the generated tweets is in the orignal dataset
-    training_path = os.path.join(file_dir, "data/textdata.csv")
-    print(training_path)
-    training = pd.read_csv(training_path)
+    training = []
+    csv_dir_path = os.path.join(file_dir, "data/")
+    for csv_path in os.listdir(csv_dir_path):
+        if csv_path.endswith(".csv"):
+            training.append(pd.read_csv(os.path.join(csv_dir_path, csv_path)))
+
+    # Combine all csv into one dataframe
+    training = pd.concat(training, ignore_index=True)
 
     while(True):
         # Select a random tweet from the options
