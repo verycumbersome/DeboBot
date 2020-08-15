@@ -38,9 +38,9 @@ TWITTER_NAMES = [
     # "dril",
     # "poop420guy69",
     # "PeterXinping",
-    "toomuchprotein",
+    # "toomuchprotein",
     # "rockanrollphoto"
-    # "inclcore",
+    "inclcore",
 ]
 SCRAPE_TIMELINE_COUNT = 5000
-SCRAPE_DEPTH = 850
+SCRAPE_DEPTH = 900
