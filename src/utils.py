@@ -134,8 +134,6 @@ def make_call(method, url, parameters):
         dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
     dst = dst[:-1]
 
-    # parameters = {k:percent_encoding(v) for k, v in parameters.items()}
-
     if method == "GET":
         return requests.get(
             url,

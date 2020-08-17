@@ -147,6 +147,7 @@ def main():
         if arg == "--clean":
             timeline = get_timeline("peepeemann", 2, True)
 
+        # Prints the current rate limits for the API
         if arg == "--rate":
             print(json.dumps(get_rate_limit()["resources"]["statuses"], indent=4))
 
