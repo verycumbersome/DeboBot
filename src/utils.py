@@ -69,7 +69,7 @@ def csv_to_txt(path):
                 item = "<|startoftext|>" + item + "<|endoftext|>\n"
                 output.append(item)
 
-    textfile_path = os.path.join(file_dir, "../textdata.txt")
+    textfile_path = os.path.join(file_dir, "../output/textdata.txt")
     with open(textfile_path, "w+") as file:
         for item in output:
             file.write(item)
