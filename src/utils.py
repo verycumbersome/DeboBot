@@ -25,8 +25,9 @@ def get_random_tweet():
         with open(text_path + file, "r") as fp:
             tweets.extend(fp.read().split("<|startoftext|>"))
 
-    # Remove duplicates and exd of text
-    tweets = list(set([tweet.replace("<|endoftext|>", "") for tweet in tweets]))
+    # Remove duplicates and end of text
+    tweets = list(set([tweet.replace("<|endoftext|>", "")
+                  for tweet in tweets]))
 
     # Checks if the generated tweets is in the orignal dataset
     training = []
@@ -42,8 +43,11 @@ def get_random_tweet():
         # Select a random tweet from the options
         tweet = random.choice(tweets)
 
-        # Check for both originality of a tweet and if the tweet contains any offensive stop words
-        unoriginal = [True for item in training["text"] if str(tweet).lower() == str(item).lower()]
+        # Check originality of a tweet and if tweet contains any stop words
+        unoriginal = [
+                True for item in training["text"]
+                if str(tweet).lower() == str(item).lower()
+            ]
         offensive = [True for item in config.STOP_WORDS if item in tweet]
 
         if not (unoriginal or offensive):
@@ -71,15 +75,17 @@ def csv_to_txt(path):
             file.write(item)
 
 
-
 def percent_encoding(string):
     """Percent encode a string"""
     result = ''
     accept = [char for char in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~'
-        .encode('utf-8')]
+              .encode('utf-8')]
 
+    # Format character in string to hex if it doesnt match percent encoding
     for char in string.encode('utf-8'):
-        result += chr(char) if char in accept else '%{}'.format(hex(char)[2:]).upper()
+        result += chr(char) if char in accept else '%{}'.format(
+                hex(char)[2:]).upper()
+
     return result
 
 
@@ -89,12 +95,10 @@ def get_ntp_time():
         try:
             client = ntplib.NTPClient()
             response = client.request('europe.pool.ntp.org', version=3)
-            ntp_time = round(
-                (datetime.now() - datetime.strptime(
+            ntp_time = round((datetime.now() - datetime.strptime(
                     ctime(response.offset),
                     "%a %b %d %H:%M:%S %Y")
-                ).total_seconds()
-            )
+                ).total_seconds())
 
             return ntp_time
 
@@ -131,7 +135,10 @@ def make_call(method, url, parameters):
     # Format Oauth authorization header
     dst = "OAuth"
     for item in auth.items():
-        dst += " " + percent_encoding(item[0]) + "=\"" + percent_encoding(str(item[1])) + "\","
+        param = percent_encoding(item[0])
+        val = percent_encoding(str(item[1]))
+        dst += " " + param + "=\"" + val + "\","
+
     dst = dst[:-1]
 
     if method == "GET":
@@ -156,12 +163,19 @@ def get_signature(method, url, token_secret, parameters):
     sorted_params = {k: str(parameters[k]) for k in sorted(parameters)}
 
     for item in sorted_params.items():
-        parameter_string += "&" + percent_encoding(item[0]) + "=" + percent_encoding(str(item[1]))
+        param = percent_encoding(item[0])
+        val = percent_encoding(str(item[1]))
+        parameter_string += "&" + param + "=" + val
 
     # Append percent encoded method url and parameter string
-    output = method + "&" + percent_encoding(url) + "&" + percent_encoding(parameter_string[1:])
+    url = percent_encoding(url)
+    param_str = percent_encoding(parameter_string[1:])
+    output = method + "&" + url + "&" + param_str
 
-    key = (percent_encoding(config.CONSUMER_SECRET) + "&" + percent_encoding(token_secret)).encode()
+    # Append Consumer Secret and token secret
+    consumer_secret = percent_encoding(config.CONSUMER_SECRET)
+    token_secret = percent_encoding(token_secret).encode()
+    key = consumer_secret + "&" + token_secret
 
     # Generate hash
     hashed = hmac.new(key, output.encode(), sha1)

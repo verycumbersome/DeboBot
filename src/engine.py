@@ -5,7 +5,6 @@ import json
 import re
 import datetime
 import pandas as pd
-# import gpt_2_simple as gpt2
 import tqdm
 
 import config
@@ -19,7 +18,7 @@ def delete_tweet(tweet_id):
     method = "POST"
     url = "https://api.twitter.com/1.1/statuses/destroy/" + str(tweet_id) + ".json"
     parameters = {
-            "id":tweet_id,
+            "id": tweet_id,
         }
     print("Deleting tweet \'" + str(tweet_id) + "\'")
     return utils.make_call(method, url, parameters)
@@ -30,7 +29,7 @@ def make_status_update(status):
     method = "POST"
     url = "https://api.twitter.com/1.1/statuses/update.json"
     parameters = {
-            "status":status,
+            "status": status,
         }
     print("Making post \'" + status + "\'")
     return utils.make_call(method, url, parameters)
@@ -42,7 +41,6 @@ def get_rate_limit():
     url = "https://api.twitter.com/1.1/application/rate_limit_status.json"
     parameters = {}
     return json.loads(utils.make_call(method, url, parameters).content)
-
 
 
 def get_timeline(screen_name, depth, prune_tweets=False):
@@ -85,7 +83,6 @@ def get_timeline(screen_name, depth, prune_tweets=False):
                 time.sleep(3)
                 pass
 
-
     return data
 
 
@@ -98,7 +95,7 @@ def error(msg):
 def main():
     """Main function"""
     for index, arg in enumerate(sys.argv):
-        # Scrape the tweets from all users in the TWITTER_NAMES array in config
+        # Scrape the tweets from all users in TWITTER_NAMES array in config
         if arg == "--scrape":
             try:
                 data = {"text": []}
@@ -107,8 +104,9 @@ def main():
                     data["text"].extend(get_timeline(
                         screen_name, config.SCRAPE_DEPTH))
 
-
-                file_name = "textdata{:%Y%m%d_%H%M%S}.csv".format(datetime.datetime.utcnow())
+                file_name = "textdata{:%Y%m%d_%H%M%S}.csv".format(
+                        datetime.datetime.utcnow()
+                    )
                 csv_path = os.path.join(file_dir, "data/" + file_name)
 
                 df = pd.DataFrame(data=data)
@@ -117,7 +115,7 @@ def main():
             except Exception:
                 error("Must enter scrape depth and length")
 
-        # Convert all csv files from the scraped data to an output text file for tuning
+        # Convert all csv files from the scraped data to an output text file
         if arg == "--txt":
             textdata_path = os.path.join(file_dir, "data/textdata.csv")
             utils.csv_to_txt(textdata_path)
@@ -127,7 +125,9 @@ def main():
             sess = gpt2.start_tf_sess()
             gpt2.load_gpt2(sess, run_name='run1')
 
-            gen_file = "gpt2_gentext_{:%Y%m%d_%H%M%S}.txt".format(datetime.datetime.utcnow())
+            gen_file = "gpt2_gentext_{:%Y%m%d_%H%M%S}.txt".format(
+                    datetime.datetime.utcnow()
+                )
 
             gpt2.generate_to_file(
                 sess,
