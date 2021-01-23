@@ -1,8 +1,10 @@
 """Engine for the twitter scraper and model text generation"""
 import os
+import re
 import sys
 import json
-import re
+import time
+
 import datetime
 import pandas as pd
 import tqdm
@@ -71,6 +73,7 @@ def get_timeline(screen_name, depth, prune_tweets=False):
             if timeline.status_code == 200:
                 for item in json.loads(timeline.content):
                     max_id = item["id"]
+                    print(type(max_id))
                     text = re.sub(r"http\S+", "", item["full_text"])
                     data.append(text)
 
@@ -97,23 +100,22 @@ def main():
     for index, arg in enumerate(sys.argv):
         # Scrape the tweets from all users in TWITTER_NAMES array in config
         if arg == "--scrape":
-            try:
-                data = {"text": []}
+            # try:
+            data = {"text": []}
 
-                for screen_name in config.TWITTER_NAMES:
-                    data["text"].extend(get_timeline(
-                        screen_name, config.SCRAPE_DEPTH))
+            for screen_name in config.TWITTER_NAMES:
+                data["text"].extend(get_timeline(screen_name,
+                                    config.SCRAPE_DEPTH))
 
-                file_name = "textdata{:%Y%m%d_%H%M%S}.csv".format(
-                        datetime.datetime.utcnow()
-                    )
-                csv_path = os.path.join(file_dir, "data/" + file_name)
+            file_name = "textdata{:%Y%m%d_%H%M%S}.csv".format(
+                datetime.datetime.utcnow())
+            csv_path = os.path.join(file_dir, "data/" + file_name)
 
-                df = pd.DataFrame(data=data)
-                df.to_csv(csv_path, index=False)
+            df = pd.DataFrame(data=data)
+            df.to_csv(csv_path, index=False)
 
-            except Exception:
-                error("Must enter scrape depth and length")
+            # except Exception:
+                # error("Must enter scrape depth and length")
 
         # Convert all csv files from the scraped data to an output text file
         if arg == "--txt":

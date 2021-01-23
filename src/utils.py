@@ -175,7 +175,7 @@ def get_signature(method, url, token_secret, parameters):
     # Append Consumer Secret and token secret
     consumer_secret = percent_encoding(config.CONSUMER_SECRET)
     token_secret = percent_encoding(token_secret).encode()
-    key = consumer_secret + "&" + token_secret
+    key = (str(consumer_secret) + "&" + str(token_secret)).encode()
 
     # Generate hash
     hashed = hmac.new(key, output.encode(), sha1)
