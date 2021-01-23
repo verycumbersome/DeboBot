@@ -69,12 +69,13 @@ def get_timeline(screen_name, depth, prune_tweets=False):
         timeline = utils.make_call(method, url, parameters)
 
         while(True):
+            print(timeline)
             # If the response code is "Ok" let the iteration keep going
             if timeline.status_code == 200:
                 for item in json.loads(timeline.content):
                     max_id = item["id"]
-                    print(type(max_id))
                     text = re.sub(r"http\S+", "", item["full_text"])
+                    print(text)
                     data.append(text)
 
                     if prune_tweets and item["favorite_count"] < 1:
@@ -84,7 +85,7 @@ def get_timeline(screen_name, depth, prune_tweets=False):
             # If the response code is not "Ok" remain looping
             else:
                 time.sleep(3)
-                pass
+                continue
 
     return data
 
